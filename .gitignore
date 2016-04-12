@@ -1,3 +1,7 @@
 .Rproj.user
 .Rhistory
 .RData
+
+data/*
+!data/shapefiles/cb_2014_us_state_500k.zip
+
