@@ -9,11 +9,14 @@ states <- states[states@data$STUSPS %in% c("DC","NY","PA","NJ","DE","CT",
                                            "MD","RI","MA","VA","WV","OH",
                                            "NC","TN","KY","MI","IL","SC",
                                            "GA","AL","MI","IN","LA","AR",
-                                           "MS","MO","IA"),]
+                                           "MS","MO","IA","WI","IO","MN",
+                                           "ND","SD","NE","KS","OK","TX",
+                                           "MT","WY","CO","NM","ID","UT",
+                                           "AZ","NV","WA","OR","CA"),]
 #Create coordinates as IDs
 states.coords <- coordinates(states)
 
-states.id <- cut(states.coords[,1],quantile(states.coords[,1]),include.lowest=TRUE)
+states.id <- cut(states.coords[,1],quantile(states.coords[,1],probs = seq(0,1,.25)),include.lowest=TRUE)
 
 states.union <- unionSpatialPolygons(states,states.id)
 
@@ -25,7 +28,7 @@ states.union <- unionSpatialPolygons(states,states.id)
 states.df <- as(states,"data.frame")
 
 #Aggregate and sum desired data attributes by ID List
-states.df.agg <- aggregate(states.df[,c("ALAND","AWATER")], list(states.id), sum)
+states.df.agg <- aggregate(states.df[,c("ALAND","AWATER")], list(states.id), mean)
 row.names(states.df.agg) <- as.character(states.df.agg$Group.1)
 
 #Reconvert data frame to SpatialPolygons
@@ -33,4 +36,6 @@ states.shp.agg <- SpatialPolygonsDataFrame(states.union, states.df.agg)
 
 #Plotting
 grid.arrange(spplot(states,"ALAND",main="State water original"),
-              spplot(states.shp.agg, "ALAND",main="State water aggregated"))
+              spplot(states.shp.agg, "AWATER",main="State water aggregated"))
+
+
